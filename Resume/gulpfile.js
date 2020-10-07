@@ -128,8 +128,8 @@ gulp.task('browserSync', function() {
 gulp.task('watch', function() {
   gulp.watch('./scss/*.scss', gulp.series('css'));
   gulp.watch('./js/*[^\.min].js', gulp.series('js'));
-  gulp.watch('./css/*.min.css', browserSync.reload);
-  gulp.watch('./*.html', browserSync.reload);
+  gulp.watch('./css/*.min.css').on('change', browserSync.reload);
+  gulp.watch('./*.html').on('change', browserSync.reload);
 })
 
 // Dev task
