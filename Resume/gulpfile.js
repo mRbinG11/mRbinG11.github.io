@@ -4,7 +4,6 @@ var header = require('gulp-header');
 var cleanCSS = require('gulp-clean-css');
 var rename = require("gulp-rename");
 var uglify = require('gulp-uglify');
-var autoprefixer = require('gulp-autoprefixer');
 var pkg = require('./package.json');
 var browserSync = require('browser-sync').create();
 
@@ -18,7 +17,7 @@ var banner = ['/*!\n',
 ].join('');
 
 // Copy third party libraries from /node_modules into /vendor
-gulp.task('vendor', function() {
+gulp.task('vendor', async function() {
 
   // Bootstrap
   gulp.src([
@@ -50,20 +49,25 @@ gulp.task('vendor', function() {
 });
 
 // Compile SCSS
-gulp.task('css:compile', function() {
+gulp.task('css:compile', function () {
   return gulp.src('./scss/**/*.scss')
-    .pipe(sass.sync({
-      outputStyle: 'expanded'
-    }).on('error', sass.logError))
-    .pipe(autoprefixer({
-      browsers: ['last 2 versions'],
-      cascade: false
-    }))
-    .pipe(header(banner, {
-      pkg: pkg
-    }))
-    .pipe(gulp.dest('./css'))
+      .pipe(sass().on('error', sass.logError))
+      .pipe(gulp.dest('./css'));
 });
+// gulp.task('css:compile', function() {
+//   return gulp.src('./scss/**/*.scss')
+//     .pipe(sass.sync({
+//       outputStyle: 'expanded'
+//     }).on('error', sass.logError))
+//     .pipe(autoprefixer({
+//       browsers: ['last 2 versions'],
+//       cascade: false
+//     }))
+//     .pipe(header(banner, {
+//       pkg: pkg
+//     }))
+//     .pipe(gulp.dest('./css'))
+// });
 
 // Minify CSS
 gulp.task('css:minify', function() {
@@ -74,6 +78,9 @@ gulp.task('css:minify', function() {
     .pipe(cleanCSS())
     .pipe(rename({
       suffix: '.min'
+    }))
+    .pipe(header(banner, {
+      pkg: pkg
     }))
     .pipe(gulp.dest('./css'))
     .pipe(browserSync.stream());
@@ -103,7 +110,10 @@ gulp.task('js:minify', function() {
 gulp.task('js', gulp.series('js:minify'));
 
 // Default task
-gulp.task('default', gulp.parallel('css', 'js', 'vendor'));
+gulp.task('default', gulp.series('vendor', gulp.parallel('css', 'js')));
+
+// Min
+gulp.task('min', gulp.parallel('css', 'js'));
 
 // Configure the browserSync task
 gulp.task('browserSync', function() {
@@ -117,9 +127,10 @@ gulp.task('browserSync', function() {
 // Watch task
 gulp.task('watch', function() {
   gulp.watch('./scss/*.scss', gulp.series('css'));
-  gulp.watch('./js/*.js', gulp.series('js'));
+  gulp.watch('./js/*[^\.min].js', gulp.series('js'));
+  gulp.watch('./css/*.min.css', browserSync.reload);
   gulp.watch('./*.html', browserSync.reload);
 })
 
 // Dev task
-gulp.task('dev', gulp.parallel('css', 'js', 'browserSync', 'watch'));
+gulp.task('dev', gulp.series('css', 'js', gulp.parallel('browserSync', 'watch')));
