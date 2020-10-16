@@ -56,23 +56,8 @@ gulp.task('vendor', async function() {
 gulp.task('css:compile', function () {
   return gulp.src('./scss/**/*.scss')
       .pipe(sass().on('error', sass.logError))
-      .pipe(header(banner, { pkg: pkg }))
       .pipe(gulp.dest('./css'));
 });
-// gulp.task('css:compile', function() {
-//   return gulp.src('./scss/**/*.scss')
-//     .pipe(sass.sync({
-//       outputStyle: 'expanded'
-//     }).on('error', sass.logError))
-//     .pipe(autoprefixer({
-//       browsers: ['last 2 versions'],
-//       cascade: false
-//     }))
-//     .pipe(header(banner, {
-//       pkg: pkg
-//     }))
-//     .pipe(gulp.dest('./css'))
-// });
 
 // Minify CSS
 gulp.task('css:minify', function() {
@@ -114,11 +99,11 @@ gulp.task('js:minify', function() {
 // JS
 gulp.task('js', gulp.series('js:minify'));
 
-// Default task
-gulp.task('default', gulp.series('vendor', gulp.parallel('css', 'js')));
+// CSS & JS
+gulp.task('css+js', gulp.parallel('css', 'js'));
 
-// Min
-gulp.task('min', gulp.parallel('css', 'js'));
+// Build task
+gulp.task('build', gulp.series('vendor', 'css+js'));
 
 // Configure the browserSync task
 gulp.task('browserSync', function() {
@@ -146,25 +131,25 @@ gulp.task('clean', function() {
         .pipe(clean({force:true}));
 });
 
-//Fonts
+// Fonts
 gulp.task('copy:fonts', function() {
   return gulp.src('./vendor/fontawesome-free/webfonts/*.*')
       .pipe(gulp.dest('../resume/webfonts'));
 });
 
-//Images
+// Images
 gulp.task('copy:images', function() {
   return gulp.src('./img/**')
       .pipe(gulp.dest('../resume/img'));
 });
 
-//PDFs
+// PDFs
 gulp.task('copy:pdfs', function() {
   return gulp.src('./*.pdf')
       .pipe(gulp.dest('../resume'));
 });
 
-//Copy
+// Copy
 gulp.task('copy', gulp.parallel('copy:fonts','copy:images','copy:pdfs'));
 
 gulp.task('usemin', function() {
@@ -179,5 +164,5 @@ gulp.task('usemin', function() {
     .pipe(gulp.dest('../resume/'));
 });
 
-//Build
-gulp.task('build', gulp.series(gulp.parallel('min','clean'), gulp.parallel('copy','usemin')))
+// Default task
+gulp.task('default', gulp.series(gulp.parallel('css+js','clean'), gulp.parallel('copy','usemin')))
