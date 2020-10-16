@@ -1,11 +1,15 @@
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 var header = require('gulp-header');
-var cleanCSS = require('gulp-clean-css');
+var cleanCss = require('gulp-clean-css');
 var rename = require("gulp-rename");
 var uglify = require('gulp-uglify');
 var pkg = require('./package.json');
 var browserSync = require('browser-sync').create();
+var usemin = require('gulp-usemin');
+var rev = require('gulp-rev');
+var htmlmin = require('gulp-htmlmin');
+var clean = require('gulp-clean');
 
 // Set the banner content
 var banner = ['/*!\n',
@@ -52,6 +56,7 @@ gulp.task('vendor', async function() {
 gulp.task('css:compile', function () {
   return gulp.src('./scss/**/*.scss')
       .pipe(sass().on('error', sass.logError))
+      .pipe(header(banner, { pkg: pkg }))
       .pipe(gulp.dest('./css'));
 });
 // gulp.task('css:compile', function() {
@@ -75,7 +80,7 @@ gulp.task('css:minify', function() {
       './css/*.css',
       '!./css/*.min.css'
     ])
-    .pipe(cleanCSS())
+    .pipe(cleanCss())
     .pipe(rename({
       suffix: '.min'
     }))
@@ -134,3 +139,45 @@ gulp.task('watch', function() {
 
 // Dev task
 gulp.task('dev', gulp.series('css', 'js', gulp.parallel('browserSync', 'watch')));
+
+// Clean
+gulp.task('clean', function() {
+  return gulp.src('../resume', {read: false})
+        .pipe(clean({force:true}));
+});
+
+//Fonts
+gulp.task('copy:fonts', function() {
+  return gulp.src('./vendor/fontawesome-free/webfonts/*.*')
+      .pipe(gulp.dest('../resume/webfonts'));
+});
+
+//Images
+gulp.task('copy:images', function() {
+  return gulp.src('./img/**')
+      .pipe(gulp.dest('../resume/img'));
+});
+
+//PDFs
+gulp.task('copy:pdfs', function() {
+  return gulp.src('./*.pdf')
+      .pipe(gulp.dest('../resume'));
+});
+
+//Copy
+gulp.task('copy', gulp.parallel('copy:fonts','copy:images','copy:pdfs'));
+
+gulp.task('usemin', function() {
+  return gulp.src('./*.html')
+    .pipe(usemin({
+        css: [ rev() ],
+        html: [ function() { return htmlmin({ collapseWhitespace: true })} ],
+        js: [ uglify(), rev() ],
+        inlinejs: [ uglify() ],
+        inlinecss: [ cleanCss(), 'concat' ]
+    }))
+    .pipe(gulp.dest('../resume/'));
+});
+
+//Build
+gulp.task('build', gulp.series(gulp.parallel('min','clean'), gulp.parallel('copy','usemin')))

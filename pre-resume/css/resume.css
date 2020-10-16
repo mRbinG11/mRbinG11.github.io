@@ -1,3 +1,9 @@
+/*!
+ * Start Bootstrap - Resume v5.0.2 (https://startbootstrap.com/template-overviews/resume)
+ * Copyright 2013-2020 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-resume/blob/master/LICENSE)
+ */
+
 body {
   font-family: 'Muli', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   padding-top: 54px;
@@ -57,8 +63,10 @@ p.lead {
 
 .dev-icons {
   font-size: 3rem; }
-  .dev-icons .list-inline-item i:hover {
-    color: #3742fa; }
+  .dev-icons .list-inline-item {
+    margin-right: 1rem; }
+    .dev-icons .list-inline-item i:hover {
+      color: #3742fa; }
 
 #pdfButton {
   position: absolute;
