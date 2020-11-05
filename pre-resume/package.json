@@ -32,7 +32,8 @@
         "gulp-htmlmin": "^5.0.1",
         "gulp-rev": "^9.0.0",
         "gulp-usemin": "^0.3.30",
-        "jquery": "^3.5.1"
+        "jquery": "^3.5.1",
+        "popper.js": "^1.16.1"
     },
     "devDependencies": {
         "browser-sync": "^2.26.12",
