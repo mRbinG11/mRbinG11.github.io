@@ -126,26 +126,26 @@ gulp.task('dev', gulp.series('css+js', gulp.parallel('browserSync', 'watch')));
 
 // Clean
 gulp.task('clean', function() {
-  return gulp.src('../resume/', {read: false, allowEmpty: true})
+  return gulp.src('../Resume/', {read: false, allowEmpty: true})
         .pipe(clean({force:true}));
 });
 
 // Fonts
 gulp.task('copy:fonts', function() {
   return gulp.src('./vendor/fontawesome-free/webfonts/*.*')
-      .pipe(gulp.dest('../resume/webfonts'));
+      .pipe(gulp.dest('../Resume/webfonts'));
 });
 
 // Images
 gulp.task('copy:images', function() {
   return gulp.src('./img/**')
-      .pipe(gulp.dest('../resume/img'));
+      .pipe(gulp.dest('../Resume/img'));
 });
 
 // PDFs
 gulp.task('copy:pdfs', function() {
   return gulp.src('./*.pdf')
-      .pipe(gulp.dest('../resume'));
+      .pipe(gulp.dest('../Resume'));
 });
 
 // Copy
@@ -160,7 +160,7 @@ gulp.task('usemin', function() {
         inlinejs: [ uglify() ],
         inlinecss: [ cleanCss(), 'concat' ]
     }))
-    .pipe(gulp.dest('../resume/'));
+    .pipe(gulp.dest('../Resume/'));
 });
 
 // Default task
