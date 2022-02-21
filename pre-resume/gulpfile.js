@@ -1,5 +1,5 @@
 var gulp = require('gulp');
-var sass = require('gulp-sass');
+var sass = require('gulp-sass')(require('sass'));
 var header = require('gulp-header');
 var cleanCss = require('gulp-clean-css');
 var rename = require("gulp-rename");
@@ -126,7 +126,7 @@ gulp.task('dev', gulp.series('css+js', gulp.parallel('browserSync', 'watch')));
 
 // Clean
 gulp.task('clean', function() {
-  return gulp.src('../resume', {read: false})
+  return gulp.src('../resume/', {read: false, allowEmpty: true})
         .pipe(clean({force:true}));
 });
 
